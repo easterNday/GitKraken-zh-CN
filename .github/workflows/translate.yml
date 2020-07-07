@@ -1,0 +1,46 @@
+name: StartTranslations
+
+# 每天定时操作
+on:
+  push:
+  schedule:
+    - cron: '0 12 * * *'
+
+jobs:
+
+  build:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v3
+
+    - name: Set up Python2.9
+      uses: actions/setup-python@v3
+      with:
+        python-version: 3.9.1
+
+    - name: requirements
+      run: |
+        python -m pip install --upgrade pip
+        pip3 install zhconv
+      
+    - name: Sync gitkraken-zh-tw
+      run: |
+        git --version
+        git clone https://github.com/rogeraabbccdd/GitKraken-zh-tw.git
+
+    - name: start translate
+      run: |
+        python ./tw2cn.py ./GitKraken-zh-tw/strings.json
+        rm -rf GitKraken-zh-tw
+    
+    - name: commit
+      run: |
+        git config --global user.email 849919718@qq.com
+        git config --global user.name easterNday
+        git add .
+        git commit -m "Update" -a
+
+    - name: Push changes
+      uses: ad-m/github-push-action@master
+      with:
+        github_token: ${{ secrets.GITHUB_TOKEN }}

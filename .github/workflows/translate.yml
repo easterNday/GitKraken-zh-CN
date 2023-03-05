@@ -37,8 +37,7 @@ jobs:
       run: |
         git config --global user.email 849919718@qq.com
         git config --global user.name easterNday
-        git add .
-        git commit -m "Update" -a
+        git commit -am "Update" || echo "没有需要更新的内容！"
 
     - name: Push changes
       uses: ad-m/github-push-action@master
